@@ -1,0 +1,338 @@
+<div class="container">
+
+  <div class="row justify-content-center">
+
+    <div class="row">
+      <div class="col-12 border border-2 rounded-2 mb-1 mt-1">
+        <div class="d-flex justify-content-around ">
+          <img class="responsive" src="./assets/img/iberlibro-logo.png">
+          <h3 class="text-center d-none d-md-block align-middle mt-4">{{titulo}}</h3>
+          <img class="responsive d-none d-md-block" src="./assets/img/gls-logo.png">
+        </div>
+        <h4 class="text-center d-block d-md-none align-middle mt-4">{{titulo}}</h4>
+      </div>
+    </div>
+
+    <!-- Avisos -->
+
+    <div class="row">
+
+      <div [hidden]="!successApi" class="alert alert-success text-center mt-3" role="alert">
+        <h1>Todo correcto</h1>
+        <p>{{successApi}}</p>
+        <br>
+        <div>Pronto nos pondremos en contacto contigo <i class="ms-4 fa fa-comments fa-3x"></i></div>
+        <div>Gracias por tu confianza</div>
+      </div>
+
+      <div [hidden]="!errorApi" class="alert alert-danger mt-4" role="alert">
+        <h3>Ha ocurrido un error al procesar el formulario</h3>
+        <p>{{errorApi}}</p>
+        <small>Intenta volver a enviar el formulario o ponte en contacto con nosotros<br>
+          Disculpa las molestias</small>
+      </div>
+    </div>
+
+
+
+    <div [hidden]="successApi" class=" ">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="bg-light p-2 rounded-lg border border-2 rounded-2"
+        autocomplete="off">
+
+        <div class="row">
+
+          <!-- nombreFiscal-->
+          <div class="form-group col-md-6">
+            <label>Nombre fiscal: </label>
+            <input type="text" formControlName="nombreFiscal" class="form-control form-control-lg" trim="blur"
+              [ngClass]="{ 'is-invalid': enviado && f['nombreFiscal'].errors }" />
+            <!-- 
+            <div *ngIf="enviado && f['nombreFiscal'].errors" class="invalid-feedback">
+              <div *ngIf="f['nombreFiscal'].errors['required']">Obligatorio</div>
+            </div>
+            -->
+          </div>
+
+          <!-- nombreComercial-->
+          <div class="form-group col-md-6">
+            <label>Nombre comercial: </label>
+            <input type="text" formControlName="nombreComercial" class="form-control form-control-lg" trim="blur"
+              [ngClass]="{ 'is-invalid': enviado && f['nombreComercial'].errors }" />
+          </div>
+
+
+
+          <!-- dir -->
+          <div class="form-group col-md-5">
+            <label>Dirección: </label>
+            <input type="text" formControlName="dir" class="form-control" placeholder="Dirección completa" trim="blur"
+              [ngClass]="{ 'is-invalid': enviado && f['dir'].errors }" />
+            <div *ngIf="enviado && f['dir'].errors" class="invalid-feedback">
+              <div *ngIf="f['dir'].errors['required']">Dirección comerciál necesaria</div>
+            </div>
+          </div>
+
+          <!-- dirCp -->
+          <div class="form-group col-md-2">
+            <label>Cp: </label>
+            <input type="text" formControlName="dirCp" class="form-control"
+              [ngClass]="{ 'is-invalid': (enviado || f['dirCp'].dirty) && f['dirCp'].errors }" maxlength="5"
+              (keyup)="buscaPob()" />
+            <!--      
+                <span *ngIf="f['dirCp'].dirty">dirCp is Dirty!</span>
+                <span>{{f['dirCp'].errors | json}}</span>
+              -->
+            <div *ngIf="f['dirCp'].errors" class="invalid-feedback">
+              <div *ngIf="f['dirCp'].errors['noExiste']">No encontrado</div>
+              <div *ngIf="f['dirCp'].errors['required']">Obligatorio</div>
+            </div>
+          </div>
+
+
+          <!-- dirPob -->
+          <div class="form-group col-md-3">
+            <label for="dirPob">Población:</label>
+            <select formControlName="dirPob" class="form-select" id="dirPob">
+              <option *ngFor="let item of listaPob" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+
+
+
+          <!-- dirPro -->
+          <div class="form-group col-md-2">
+            <label for="dirPro">Provincia:</label>
+            <input [attr.disabled]="true" type="text" formControlName="dirPro" class="form-control readonly">
+          </div>
+
+        </div>
+
+
+        <div class="row">
+
+          <!-- contacto -->
+          <div class="form-group col-md-10">
+            <label>Contacto: </label>
+            <input type="text" formControlName="contacto" class="form-control" trim="blur"
+              placeholder="Nombre de la persona de contacto"
+              [ngClass]="{ 'is-invalid': enviado && f['contacto'].errors }" (keyup)="contactoChange()" />
+            <div *ngIf="enviado && f['contacto'].errors" class="invalid-feedback">
+              <div *ngIf="f['contacto'].errors['minlength']">Contacto debe contener un mínimo de 6 caracteres</div>
+              <div *ngIf="f['contacto'].errors['maxlength']">Contacto no puede exceder de 20 caracteres</div>
+            </div>
+          </div>
+
+ 
+
+          <!-- nif -->
+          <div class="form-group col-md-2">
+            <label>Nif/Nie/Dni: </label>
+            <input type="text" formControlName="nif" class="form-control input-upper" trim="blur"
+              [ngClass]="{ 'is-invalid': enviado && f['nif'].errors }" />
+            <div *ngIf="enviado && f['nif'].errors" class="invalid-feedback">
+              <div *ngIf="f['nif'].errors['formatoDni']">El formato no es correcto</div>
+              <div *ngIf="f['nif'].errors['letraDni']">La letra no es corecta</div>
+            </div>
+          </div>
+
+
+
+        </div>
+
+
+        <div class="row">
+
+          <!-- eMail -->
+          <div class="form-group col-md-8">
+            <label for="eMail">eMail:</label>
+            <input type="text" formControlName="eMail" class="form-control" placeholder=" {{eMailPlaceholder}}"
+              trim="blur" [ngClass]="{ 'is-invalid': enviado && f['eMail'].errors }" />
+            <div *ngIf="enviado && f['eMail'].errors" class="invalid-feedback">
+              <div *ngIf="f['eMail'].errors['email']">Email inválido</div>
+            </div>
+          </div>
+
+          <!-- telefono -->
+          <div class="form-group col-md-4">
+            <label for="strProOri">Telefono:</label>
+            <input type="text" formControlName="telefono" class="form-control" id="telefono" trim="blur">
+          </div>
+
+        </div>
+
+
+
+        <hr class="bg-success border-2 border-top border-success mt-4">
+
+        <div class="row">
+
+
+
+          <!-- iban -->
+          <div class="form-group col-md-3">
+            <label for="iban">Iban:</label>
+            <input type="text" formControlName="iban" class="form-control"
+              oninput="this.value = this.value.toUpperCase()" [ngClass]="{ 'is-invalid': enviado && f['iban'].errors }"
+              [imask]="{mask: 'aa00 0000 0000 0000 0000 0000'}" placeholder="ES99 9999 9999 9999 9999 9999" />
+            <div *ngIf="enviado && f['iban'].errors" class="invalid-feedback">
+              <div *ngIf="f['iban'].errors['longitud']">Longitud incorrecta</div>
+              <div *ngIf="f['iban'].errors['formato']">Iban no válido</div>
+            </div>
+          </div>
+
+
+          <!-- tarifa -->
+          <div class="form-group col-md-3">
+            <label for="tarifa">Envíos mensuales:</label>
+            <select formControlName="tarifa" class="form-select" id="tarifa"
+              [ngClass]="{ 'is-invalid': enviado && f['tarifa'].errors }">
+              <option value="" disabled selected>Selecciona...</option>
+              <option [value]="1">Promedio inferior de 120 envíos/mes</option>
+              <option [value]="2">Promedio superior de 120 envíos/mes</option>
+            </select>
+          </div>
+
+          <!-- seguro -->
+          <div class="form-group col-md-3">
+            <label for="seguro">Cobertura de seguro:</label>
+            <select formControlName="seguro" class="form-select" id="seguro"
+              [ngClass]="{ 'is-invalid': enviado && f['seguro'].errors }">
+              <option value="" disabled selected>Selecciona...</option>
+              <option [value]="0">Sin seguro</option>
+              <option [value]="1">Seguro opcional 8%</option>
+              <!-- 
+              <option [value]="2">Seguro todo riesgo</option>
+              -->
+            </select>
+          </div>
+
+          <!-- recogida -->
+          <div class="form-group col-md-3">
+            <label for="recogida">Recogidas:</label>
+            <select formControlName="recogida" class="form-select" id="recogida"
+              [ngClass]="{ 'is-invalid': enviado && f['recogida'].errors }">
+              <option value="" disabled selected>Selecciona...</option>
+              <option [value]="1">Mañanas 10:00-13:00h</option>
+              <option [value]="2">Tardes 14:00-16:00h</option>
+              <option [value]="0">Indiferente 10:00-16:00h</option>
+            </select>
+          </div>
+
+
+
+        </div>
+
+
+
+        <!-- acceptTerms -->
+        <div class="form-group form-check mt-3">
+          <input type="checkbox" formControlName="acceptTerms" id="acceptTerms" class="form-check-input  "
+            [ngClass]="{ 'is-invalid': enviado && f['acceptTerms'].errors }" />
+          <label for="acceptTerms" class="form-check-label ">He leido y acepto la </label>
+          <span (click)="abrirModal(modalInfo)" class="ms-1 terminos">Política de privacidad</span>
+          <div *ngIf="enviado && f['acceptTerms'].errors" class="invalid-feedback">Debes aceptar la Política de
+            privacidad para proceder con la solicitud</div>
+        </div>
+
+
+        <!-- acceptCondiciones -->
+        <div class="form-group form-check mt-3">
+          <input type="checkbox" formControlName="acceptCondiciones" id="acceptCondiciones" class="form-check-input  "
+            [ngClass]="{ 'is-invalid': enviado && f['acceptCondiciones'].errors }" />
+          <label for="acceptCondiciones" class="form-check-label ">He leido y acepto las </label>
+          <span (click)="verCondiciones()" class="ms-1 terminos">Condiciones generales del transporte</span>
+          <div *ngIf="enviado && f['acceptCondiciones'].errors" class="invalid-feedback">Debes aceptar las condiciones
+            generales del transporte para proceder con la solicitud</div>
+        </div>
+
+
+        <!-- acceptExoneracion -->
+        <div class="form-group form-check mt-3">
+          <input type="checkbox" formControlName="acceptExoneracion" id="acceptExoneracion" class="form-check-input  "
+            [ngClass]="{ 'is-invalid': enviado && f['acceptExoneracion'].errors }" />
+          <label for="acceptExoneracion" class="form-check-label ">He leido y acepto el </label>
+          <span (click)="verExoneracion()" class="ms-1 terminos">Certificado de exoneración de responsabilidad sobre las
+            mercancías</span>
+          <div *ngIf="enviado && f['acceptExoneracion'].errors" class="invalid-feedback">Debes aceptar el certificado de
+            exoneración para proceder con la solicitud</div>
+        </div>
+
+
+        <div class="form-group mt-3">
+
+          <div class="d-flex justify-content-between ">
+            <div [hidden]="f['tarifa'].value"></div>
+            <button [hidden]="!f['tarifa'].value" type="button" class="btn btn-colour-1" (click)="verTarifas()">Ver
+              tarifas</button>
+            <button [disabled]="loading" type="submit" class="btn btn-outline me-2">
+              <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+              Enviar formulario
+            </button>
+          </div>
+
+
+          <!-- Textos al pie -->
+          <div [hidden]="!f['tarifa'].value" class="mt-1">
+            <small>
+              <b>Carburante</b>: A los precios de la tarifa tiene que saber, que a pie de factura se carga el CARBURANTE
+              que es un 4.5%.<br>
+              <b>Forma de pago</b>: Recibo domiciliado día 15 de cada mes, las facturas se enviarán de manera automática
+              via email.<br>
+              <b>SIN COSTE ADICIONAL</b>, estáis cubiertos por la Lott, es 6,28€ kilo real. (al aceptar la exoneración)
+            </small>
+          </div>
+
+          <div [hidden]="registerForm.value.seguro!='1'" class="mt-1">
+            <small>
+              <b>Seguro opcional</b>: EL 8% es sobre el porcentaje en Euros aplicado sobre los portes.
+              Cobertura hasta un máximo de 27,50€ por kilo real, con un máximo de 1.500€ por expedición.
+            </small>
+          </div>
+
+          <div [hidden]="registerForm.value.seguro!='2'" class="mt-1">
+            <small>
+              <b>Seguro todo riesgo</b>: Se puede hacer puntualmente por envío, es un 2% porcentaje en Euros aplicable
+              sobre el valor de la
+              mercancía, con un mínimo de 5€ por expedición.
+              Máximo a asegurar 16.000 €. Se deberá solicitar vía Email a la oficina antes de su recogida.
+            </small>
+          </div>
+
+
+        </div>
+
+      </form>
+
+
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<!-- Modal -->
+
+<ng-template #modalInfo let-modal>
+  <div class="modal-header">
+    <h5>Política de privacidad</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="cerrarModal()"></button>
+  </div>
+  <div class="modal-body">
+    En cumplimiento de la normativa vigente de Protección de Datos, General Logistics Systems Spain S.A (en adelante,
+    GLS), con domicilio social en Av. Fuentemar 18, 28823 Coslada, Madrid, es responsable del tratamiento de los datos
+    personales introducidos en el presente formulario. La finalidad del tratamiento es dar respuesta a la solicitud de
+    información del interesado. Los datos podrían ser cedidos a otras empresas colaboradoras con GLS que forman parte de
+    la Red de Colaboradores de GLS con el fin de dar respuesta y resolver las consultas o reclamaciones planteadas y por
+    obligación legal. Los datos son tratados conforme a la relación contractual del interesado con GLS o su Red de
+    Colaboradores. El periodo de retención de los datos será el aplicable legalmente. Tiene derecho a acceder,
+    rectificar y suprimir, oponerse al tratamiento, solicitar la limitación al tratamiento de los mismos, y su
+    portabilidad los datos enviando un correo electrónico a la dirección protecciondatos@gls-spain.es o mediante correo
+    postal a Av. Fuentemar 18, 28823 Coslada, Madrid, adjuntando en ambos casos fotocopia del DNI para poder acreditar
+    la identidad del solicitante. En caso de que sus derechos se vean vulnerados, podrá presentar una reclamación ante
+    la Agencia Española de Protección de Datos.
+  </div>
+</ng-template>

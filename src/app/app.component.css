@@ -1,0 +1,79 @@
+label {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.form-check-label {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.terminos {    
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.readonly{
+  background-color: rgb(251, 249, 249);
+  cursor: default;
+  caret-color: transparent;
+}
+
+.input-upper{
+  text-transform: uppercase;
+}
+
+
+
+
+
+
+
+
+
+.btn-outline {
+    color: #4fbfa8;
+    background-color: #ffffff;
+    border-color: #4fbfa8;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+  }
+  
+  .btn-outline {
+    color: #4fbfa8;
+    background-color: #ffffff;
+    border-color: #4fbfa8;
+    font-weight: bold;
+    border-radius: 0;
+  }
+  
+  .btn-outline:hover,
+  .btn-outline:active,
+  .btn-outline:focus,
+  .btn-outline.active {
+    background: #4fbfa8;
+    color: #ffffff;
+    border-color: #4fbfa8;
+    
+  }
+  
+  
+  .btn-colour-1 {
+    color: #fff;
+    background-color: #004E64;
+    border-color: #004E64;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    border-radius: 0;
+  }
+  
+  .btn-colour-1:hover,
+  .btn-colour-1:active,
+  .btn-colour-1:focus,
+  .btn-colour-1.active {
+    /* let's darken #004E64 a bit for hover effect */
+    background: #004E64;
+    color: #ffffff;
+    border-color: #003D4F;
+  }
+  
